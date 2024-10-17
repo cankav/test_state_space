@@ -2,6 +2,8 @@ import itertools
 import sys
 from datetime import datetime
 from sklearn.preprocessing import LabelEncoder
+import pickle
+import os
 
 # This script tests to see if we can generate a LabelEncoder that
 # has a large number of states.
@@ -9,6 +11,8 @@ from sklearn.preprocessing import LabelEncoder
 
 # number of bits in our state space
 bit_count = sys.argv[1]
+filename = sys.argv[2]
+
 try:
     bit_count = int(bit_count)
 except ValueError:
@@ -30,4 +34,13 @@ print(f"\nle generation took {le_time:.2f} seconds")
 print("LabelEncoder classes preview:")
 print(le.classes_)
 
-print(f"\n\ntotal time {state_space_time+le_time:.2f} seconds")
+start = datetime.now()
+with open(filename,'wb') as fp:
+    pickle.dump(le,fp)
+dump_time = (datetime.now()-start).total_seconds()
+print(f"dumping took {dump_time:.2f} seconds")
+cmd = f'du -sh {filename}'
+print('dump size')
+os.system(cmd)
+
+print(f"\n\ntotal time {state_space_time+le_time+dump_time:.2f} seconds")
